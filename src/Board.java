@@ -72,10 +72,10 @@ public class Board {
 		return -1;
 	}
 
-	public int[] findKing(boolean whiteKing) {
+	public int[] findKing(Piece[][] board, boolean whiteKing) {
 		for (int x = 0; x < grid.length; x++) {
 			for (int y = 0; y < grid.length; y++) {
-				if (grid[x][y] instanceof King && grid[x][y].isWhite() == whiteKing) {
+				if (board[x][y] instanceof King && board[x][y].isWhite() == whiteKing) {
 					return  new int[] {x, y};
 				}
 			}

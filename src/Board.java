@@ -42,6 +42,9 @@ public class Board {
 		Piece piece = board[fromX][fromY];
 		if (piece == null || piece.isWhite() != isWhiteTurn)
 			return false;
+		if (!(toX < 8 && toX > 0 && toY < 8 && toY > 0)) {
+			return false;
+		}
 		return piece.isValidMove(fromX, fromY, toX, toY, grid, forRendering);
 	}
 

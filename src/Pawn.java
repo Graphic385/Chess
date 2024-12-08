@@ -23,8 +23,7 @@ public class Pawn extends Piece {
 			}
 
 			// for promotion to queen if at end of board
-			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering && board[toX][toY]
-					.isWhite() != isWhite()) {
+			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering) {
 				board[fromX][fromY] = null;
 				// TODO make popup with options for piece
 				board[toX][toY] = new Queen(isWhite()); // Promote to a queen

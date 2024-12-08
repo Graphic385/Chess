@@ -1,7 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -9,8 +6,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 public class ChessGame {
 	private Board board;
 	private ChessPanel panel;
@@ -41,6 +36,9 @@ public class ChessGame {
 	}
 
 	public void handleClick(int mouseX, int mouseY) {
+		if (!board.isInBounds(mouseX, mouseY)) {
+			return;
+		}
 		int cellX = mouseX / (panel.getWidth() / 8);
 		int cellY = mouseY / (panel.getWidth() / 8);
 		Piece pieceOnCellMove = board.getPieceAt(cellX, cellY);
@@ -49,7 +47,7 @@ public class ChessGame {
 
 		if (slectedPiece != null) {
 			if (board.isValidMove(board.getPieceX(slectedPiece), board.getPieceY(slectedPiece), cellX, cellY,
-					board.getGrid(), false, isWhiteTurn)) { // TODO change last parameter to isWhiteTurn
+					board.getGrid(), false, isWhiteTurn)) {
 				if (!(slectedPiece instanceof Pawn && ((Pawn) slectedPiece).didPromoteInThisTurn())) {
 					board.movePiece(slectedPieceX, slectedPieceY, cellX, cellY, board.getGrid());
 				}
@@ -133,7 +131,7 @@ public class ChessGame {
 	}
 
 	public boolean isInCheckmate(Piece[][] grid, boolean whiteCheck) {
-		Piece[][] copyOfGrid = new Piece[grid.length][]; // TODO maybe remove later if not used
+		Piece[][] copyOfGrid = new Piece[grid.length][]; 
 		int[] kingLocation = board.findKing(grid, whiteCheck);
 		int kingX = kingLocation[0];
 		int kingY = kingLocation[1];
@@ -214,9 +212,7 @@ public class ChessGame {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				if (board.isValidMove(board.getPieceX(piece),
-						board.getPieceY(piece), x, y, board.getGrid(), true, isWhiteTurn)) { // TODO change last
-																								// parameter to
-					// isWhiteTurn
+						board.getPieceY(piece), x, y, board.getGrid(), true, isWhiteTurn)) { 
 					panel.drawPossibleMove(x, y);
 				}
 			}

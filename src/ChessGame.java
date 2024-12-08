@@ -36,11 +36,11 @@ public class ChessGame {
 	}
 
 	public void handleClick(int mouseX, int mouseY) {
-		if (!board.isInBounds(mouseX, mouseY)) {
-			return;
-		}
 		int cellX = mouseX / (panel.getWidth() / 8);
 		int cellY = mouseY / (panel.getWidth() / 8);
+		if (!board.isInBounds(cellX, cellY)) {
+			return;
+		}
 		Piece pieceOnCellMove = board.getPieceAt(cellX, cellY);
 		int slectedPieceX = board.getPieceX(slectedPiece);
 		int slectedPieceY = board.getPieceY(slectedPiece);

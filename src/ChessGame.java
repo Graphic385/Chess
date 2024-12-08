@@ -1,27 +1,43 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 public class ChessGame {
 	private Board board;
 	private ChessPanel panel;
 	private Piece slectedPiece = null;
-	private TimeSelection timeSelection;
+	private TimeSelection timeSelection = null;
 	private boolean isWhiteTurn = true;
 	protected int boardSize = 800;
 	private JFrame frame;
+	private JPanel settingsPanel;
+	private JPanel timerPanel;
 
 	public void startGame() {
 		board = new Board();
 		board.initialize();
 		createGUI();
+	}
+
+	public void restartGame() {
+		isWhiteTurn = true;
+		slectedPiece = null;
+		timeSelection = null;
+		board = new Board();
+		board.initialize();
+		frame.getContentPane().removeAll(); // Clear the frame
+		frame.revalidate(); // Refresh the frame's layout
+		frame.repaint(); //
+		timeSelectionGUI();
 	}
 
 	public void handleClick(int mouseX, int mouseY) {
@@ -30,6 +46,7 @@ public class ChessGame {
 		Piece pieceOnCellMove = board.getPieceAt(cellX, cellY);
 		int slectedPieceX = board.getPieceX(slectedPiece);
 		int slectedPieceY = board.getPieceY(slectedPiece);
+
 		if (slectedPiece != null) {
 			if (board.isValidMove(board.getPieceX(slectedPiece), board.getPieceY(slectedPiece), cellX, cellY,
 					board.getGrid(), false, isWhiteTurn)) { // TODO change last parameter to isWhiteTurn
@@ -38,26 +55,24 @@ public class ChessGame {
 				}
 				panel.drawBoard(panel.getGraphics());
 				isWhiteTurn = !isWhiteTurn;
+				((TimerPanel) timerPanel).newMove(isWhiteTurn);
 				if (isInCheckmate(board.getGrid(), isWhiteTurn)) {
 					checkMateAction(isWhiteTurn);
-				} else {
-					System.out.println("not checkmate");
 				}
 
-				// After a pawn moves in the game:
-				for (Piece[] row : board.getGrid()) {
-					for (Piece piece : row) {
-						if (piece instanceof Pawn) {
-							((Pawn) piece).resetEnPassantVulnerability();
-						}
-					}
-				}
+				// Reset en passant vulnerabilities after a move
+                for (Piece[] row : board.getGrid()) {
+                    for (Piece piece : row) {
+                        if (piece instanceof Pawn) {
+                            ((Pawn) piece).resetEnPassantVulnerability();
+                        }
+                    }
+                }
 				slectedPiece = null;
 			} else if (pieceOnCellMove != null
 					&& slectedPiece.isWhite() == pieceOnCellMove.isWhite()) {
 				slectedPiece = pieceOnCellMove;
 				panel.drawBoard(panel.getGraphics());
-
 				renderPossibleMoves(slectedPiece);
 			} else {
 				slectedPiece = null;
@@ -189,7 +204,7 @@ public class ChessGame {
 		if (JOptionPane.showConfirmDialog(null, "Do you want to play again?",
 				(whiteWon ? "Black" : "White") + " won!!!",
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			startGame();
+			restartGame();
 		} else {
 			frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}
@@ -212,31 +227,30 @@ public class ChessGame {
 		frame = new JFrame("Chess");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(boardSize, boardSize);
+		frame.setVisible(isWhiteTurn);
+		timeSelectionGUI();
+	}
 
-		JPanel settingsPanel = new SettingsPanel(this);
+	private void timeSelectionGUI() {
+		settingsPanel = new SettingsPanel(this);
 		frame.add(settingsPanel);
 		frame.setVisible(true);
 	}
 
 	protected void gamemodeSelected() {
+		timeSelection = ((SettingsPanel) settingsPanel).getSelectedTime();
 		frame.getContentPane().removeAll(); // Clear the frame
 		gameGUI();
 		frame.revalidate(); // Refresh the frame's layout
 	}
 
 	private void gameGUI() {
-		frame.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
+		frame.setLayout(new BorderLayout());
+		
 
 		// Chess panel (center)
 		panel = new ChessPanel(board, this);
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridheight = 2; // Span vertically
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 0.8; // More space allocated
-		gbc.weighty = 1.0;
-		frame.add(panel, gbc);
+		frame.add(panel, BorderLayout.CENTER);
 
 		// Turn indicator panel (top)
 		JPanel turnPanel = new JPanel();
@@ -245,28 +259,17 @@ public class ChessGame {
 		JLabel blackTurnLabel = new JLabel("Black's Turn", SwingConstants.CENTER);
 		turnPanel.add(whiteTurnLabel);
 		turnPanel.add(blackTurnLabel);
-
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridheight = 1; // Only one row
-		gbc.weightx = 0.8;
-		gbc.weighty = 0.1;
-		frame.add(turnPanel, gbc);
+		frame.add(turnPanel, BorderLayout.NORTH);
 
 		// Timer panel (right)
-		JPanel timerPanel = new JPanel();
-		timerPanel.setLayout(new GridLayout(2, 1));
-		JLabel whiteTimer = new JLabel("White: 10:00", SwingConstants.CENTER);
-		JLabel blackTimer = new JLabel("Black: 10:00", SwingConstants.CENTER);
-		timerPanel.add(whiteTimer);
-		timerPanel.add(blackTimer);
-
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		gbc.gridheight = 2; // Span vertically
-		gbc.weightx = 0.2; // Less space
-		gbc.weighty = 1.0;
-		frame.add(timerPanel, gbc);
+		timerPanel = new TimerPanel(timeSelection);
+		frame.add(timerPanel, BorderLayout.EAST);
+		frame.setMinimumSize(frame.getSize());
+		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	public boolean getIsWhiteTurn() {
+		return isWhiteTurn;
 	}
 }

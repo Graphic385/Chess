@@ -86,6 +86,69 @@ public class Board {
 		return new int[] {-1, -1};
 	}
 
+	public boolean isInCheck(boolean whiteKing) {
+        int[] kingLocation = findKing(grid, whiteKing);
+        if (kingLocation[0] == -1) return false; // No king found
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = grid[x][y];
+                if (piece != null && piece.isWhite() != whiteKing) {
+                    if (piece.isValidMove(x, y, kingLocation[0], kingLocation[1], grid, false)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+	public boolean isInCheckmate(boolean whiteKing) {
+		if (!isInCheck(whiteKing))
+			return false; // Not in check, so no checkmate
+
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Piece piece = grid[x][y];
+				if (piece != null && piece.isWhite() == whiteKing) {
+					// Check all possible moves for this piece
+					for (int toX = 0; toX < 8; toX++) {
+						for (int toY = 0; toY < 8; toY++) {
+							if (piece.isValidMove(x, y, toX, toY, grid, false)) {
+								// Simulate the move
+								Piece[][] simulatedGrid = getCopyOfGrid();
+								simulatedGrid[toX][toY] = simulatedGrid[x][y];
+								simulatedGrid[x][y] = null;
+
+								if (!isKingInCheckAfterMove(simulatedGrid, whiteKing)) {
+									return false; // A valid move exists to escape checkmate
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true; // No valid moves to escape check
+	}
+
+	private boolean isKingInCheckAfterMove(Piece[][] simulatedGrid, boolean whiteKing) {
+        int[] kingLocation = findKing(simulatedGrid, whiteKing);
+        if (kingLocation[0] == -1) return false; // No king found
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = simulatedGrid[x][y];
+                if (piece != null && piece.isWhite() != whiteKing) {
+                    if (piece.isValidMove(x, y, kingLocation[0], kingLocation[1], simulatedGrid, false)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 	public Piece getPieceAt(int x, int y) {
 		return grid[x][y];
 	}

@@ -82,6 +82,9 @@ public class ChessGame {
 				renderPossibleMoves(slectedPiece);
 			}
 		}
+		if (isInCheck(board.getGrid(), isWhiteTurn, board.findKing(board.getGrid(), isWhiteTurn))) {
+			panel.drawBoard(panel.getGraphics());
+		}
 	}
 
 	public boolean isInCheck(Piece[][] grid, boolean whiteCheck, int[] kingLocation) {

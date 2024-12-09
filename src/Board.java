@@ -132,4 +132,8 @@ public class Board {
 		}
 		return copyOfGrid;
 	}
+
+	public ChessGame getGame() {
+		return game;
+	}
 }

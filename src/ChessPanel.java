@@ -38,15 +38,23 @@ public class ChessPanel extends JPanel {
 
 	protected void drawBoard(Graphics g) {
 		int cellSize = getWidth() / 8;
+
+		boolean isWhiteTurn = board.getGame().getIsWhiteTurn(); 
+		int[] kingLocation = board.findKing(board.getGrid(), isWhiteTurn);
+		boolean kingInCheck = board.getGame().isInCheck(board.getGrid(), isWhiteTurn, kingLocation);
+
 		// Draw the board squares
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				if ((x + y) % 2 == 0) {
-					g.setColor(new Color(241, 217, 182)); // light brown
+				if (x == kingLocation[0] && y == kingLocation[1] && kingInCheck) {
+					g.setColor(new Color(255, 0, 0)); // Red background for the king in check
+				} else if ((x + y) % 2 == 0) {
+					g.setColor(new Color(241, 217, 182)); // Light brown
 				} else {
-					g.setColor(new Color(181, 137, 99)); // dark brown
+					g.setColor(new Color(181, 137, 99)); // Dark brown
 				}
 				g.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+
 				Piece piece = board.getPieceAt(x, y);
 				if (piece != null) {
 					drawPiece(g, piece, x * cellSize, y * cellSize, cellSize);

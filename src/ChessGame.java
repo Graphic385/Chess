@@ -1,11 +1,8 @@
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 public class ChessGame {
 	private Board board;
 	private ChessPanel panel;
@@ -16,6 +13,7 @@ public class ChessGame {
 	private JFrame frame;
 	private JPanel settingsPanel;
 	private JPanel timerPanel;
+	private JPanel turnPanel;
 
 	public void startGame() {
 		board = new Board(this);
@@ -54,6 +52,7 @@ public class ChessGame {
 				panel.drawBoard(panel.getGraphics());
 				isWhiteTurn = !isWhiteTurn;
 				((TimerPanel) timerPanel).newMove(isWhiteTurn);
+				((TurnPanel) turnPanel).newMove(isWhiteTurn);
 				if (isInCheckmate(board.getGrid(), isWhiteTurn)) {
 					checkMateAction(isWhiteTurn);
 				}
@@ -252,12 +251,7 @@ public class ChessGame {
 		frame.add(panel, BorderLayout.CENTER);
 
 		// Turn indicator panel (top)
-		JPanel turnPanel = new JPanel();
-		turnPanel.setLayout(new GridLayout(1, 2));
-		JLabel whiteTurnLabel = new JLabel("White's Turn", SwingConstants.CENTER);
-		JLabel blackTurnLabel = new JLabel("Black's Turn", SwingConstants.CENTER);
-		turnPanel.add(whiteTurnLabel);
-		turnPanel.add(blackTurnLabel);
+		turnPanel = new TurnPanel();
 		frame.add(turnPanel, BorderLayout.NORTH);
 
 		// Timer panel (right)

@@ -18,7 +18,7 @@ public class ChessGame {
 	private JPanel timerPanel;
 
 	public void startGame() {
-		board = new Board();
+		board = new Board(this);
 		board.initialize();
 		createGUI();
 	}
@@ -27,7 +27,7 @@ public class ChessGame {
 		isWhiteTurn = true;
 		slectedPiece = null;
 		timeSelection = null;
-		board = new Board();
+		board = new Board(this);
 		board.initialize();
 		frame.getContentPane().removeAll(); // Clear the frame
 		frame.revalidate(); // Refresh the frame's layout

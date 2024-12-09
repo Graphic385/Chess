@@ -9,5 +9,7 @@ public abstract class Piece {
 		return isWhite;
 	}
 
+	public abstract Piece copy();
+
 	public abstract boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering);
 }

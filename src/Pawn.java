@@ -1,13 +1,22 @@
 public class Pawn extends Piece {
-	private boolean hasMoved;
-	private boolean vulnerableToEnPassant;
-	private boolean didPromoteInThisTurn;
+	protected boolean hasMoved;
+	protected boolean vulnerableToEnPassant;
+	protected boolean didPromoteInThisTurn;
 
 	public Pawn(boolean isWhite) {
 		super(isWhite);
 		hasMoved = false;
 		vulnerableToEnPassant = false;
 		didPromoteInThisTurn = false;
+	}
+
+	@Override
+	public Pawn copy() {
+		Pawn pawn = new Pawn(this.isWhite());
+		pawn.hasMoved = this.hasMoved;
+		pawn.vulnerableToEnPassant = this.vulnerableToEnPassant;
+		pawn.didPromoteInThisTurn = this.didPromoteInThisTurn;
+		return pawn;
 	}
 
 	@Override

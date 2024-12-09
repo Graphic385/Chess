@@ -1,11 +1,17 @@
 public class King extends Piece {
-	private boolean hasMoved;
+	protected boolean hasMoved;
 
 	public King(boolean isWhite) {
 		super(isWhite);
 		hasMoved = false;
 	}
 
+	@Override
+	public King copy() {
+		King king = new King(this.isWhite());
+		king.hasMoved = this.hasMoved;
+		return king;
+	}
 	@Override
 	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering) {
 		int dx = Math.abs(toX - fromX);

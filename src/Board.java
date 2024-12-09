@@ -1,5 +1,11 @@
+
 public class Board {
+	private ChessGame game;
 	private Piece[][] grid = new Piece[8][8];
+
+	public Board(ChessGame game) {
+		this.game = game;
+	}
 
 	public void initialize() {
 		// place pawns
@@ -38,12 +44,23 @@ public class Board {
 		grid[4][7] = new King(true);
 	}
 
-	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering, boolean isWhiteTurn) {
+	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering,
+			boolean isWhiteTurn) {
 		Piece piece = board[fromX][fromY];
 		if (piece == null || piece.isWhite() != isWhiteTurn)
 			return false;
 		if (!isInBounds(toX, toY)) {
 			return false;
+		}
+
+		Piece[][] copyOfGrid = getCopyOfGrid();
+		if (copyOfGrid[fromX][fromY].isValidMove(fromX, fromY, toX, toY, copyOfGrid, false)) { 
+			if (!(copyOfGrid[toX][toY] instanceof Pawn && ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
+				movePiece(fromX, fromY, toX, toY, copyOfGrid);
+			}
+			if (game.isInCheck(copyOfGrid, isWhiteTurn, findKing(copyOfGrid, isWhiteTurn))) {
+				return false;
+			}
 		}
 		return piece.isValidMove(fromX, fromY, toX, toY, grid, forRendering);
 	}
@@ -79,13 +96,13 @@ public class Board {
 		for (int x = 0; x < grid.length; x++) {
 			for (int y = 0; y < grid.length; y++) {
 				if (board[x][y] instanceof King && board[x][y].isWhite() == whiteKing) {
-					return  new int[] {x, y};
+					return new int[] { x, y };
 				}
 			}
 		}
-		return new int[] {-1, -1};
+		return new int[] { -1, -1 };
 	}
-	
+
 	public boolean isInBounds(int x, int y) {
 		return (x >= 0 && x < 8) && (y >= 0 && y < 8);
 	}
@@ -102,10 +119,16 @@ public class Board {
 		return grid;
 	}
 
-	public Piece[][] getCopyOfGrid() { 
-		Piece[][] copyOfGrid = new Piece[grid.length][];
+	public Piece[][] getCopyOfGrid() {
+		Piece[][] copyOfGrid = new Piece[grid.length][grid.length];
 		for (int i = 0; i < grid.length; i++) {
-			copyOfGrid[i] = grid[i].clone();
+			if (grid[i] == null) 
+				continue;
+			for (int j = 0; j < grid.length; j++) {
+				if (grid[i][j] != null) {
+					copyOfGrid[i][j] = grid[i][j].copy();
+				} 
+			}
 		}
 		return copyOfGrid;
 	}

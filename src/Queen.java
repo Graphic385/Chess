@@ -5,6 +5,12 @@ public class Queen extends Piece {
 	}
 
 	@Override
+	public Queen copy() {
+		Queen queen = new Queen(this.isWhite());
+		return queen;
+	}
+
+	@Override
 	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering) {
 		int dx = Math.abs(toX - fromX);
 		int dy = Math.abs(toY - fromY);

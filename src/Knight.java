@@ -5,6 +5,11 @@ public class Knight extends Piece {
 	}
 
 	@Override
+	public Knight copy() {
+		Knight knight = new Knight(this.isWhite());
+		return knight;
+	}
+	@Override
 	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering) {
 		int dx = Math.abs(toX - fromX);
 		int dy = Math.abs(toY - fromY);

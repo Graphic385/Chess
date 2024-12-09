@@ -1,11 +1,17 @@
 public class Rook extends Piece {
-	private boolean hasMoved;
+	protected boolean hasMoved;
 
 	public Rook(boolean isWhite) {
 		super(isWhite);
 		hasMoved = false;
 	}
 
+	@Override
+	public Rook copy() {
+		Rook rook = new Rook(this.isWhite());
+		rook.hasMoved = this.hasMoved;
+		return rook;
+	}
 	@Override
 	public boolean isValidMove(int fromX, int fromY, int toX, int toY, Piece[][] board, boolean forRendering) {
 		//must move in straight line

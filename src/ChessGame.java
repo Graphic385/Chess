@@ -261,8 +261,11 @@ public class ChessGame {
 		frame.add(turnPanel, BorderLayout.NORTH);
 
 		// Timer panel (right)
-		timerPanel = new TimerPanel(timeSelection);
-		frame.add(timerPanel, BorderLayout.EAST);
+		if (!(timeSelection == TimeSelection.NoLimit)) {
+			timerPanel = new TimerPanel(timeSelection);
+			frame.add(timerPanel, BorderLayout.EAST);
+		}
+		
 		frame.setMinimumSize(frame.getSize());
 		frame.pack();
 		frame.setVisible(true);

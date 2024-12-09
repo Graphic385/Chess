@@ -1,4 +1,5 @@
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -12,8 +13,8 @@ public class ChessGame {
 	protected int boardSize = 800;
 	private JFrame frame;
 	private JPanel settingsPanel;
-	private JPanel timerPanel;
-	private JPanel turnPanel;
+	private JPanel blackPlayer;
+	private JPanel whitePlayer;
 
 	public void startGame() {
 		board = new Board(this);
@@ -51,8 +52,13 @@ public class ChessGame {
 				}
 				panel.drawBoard(panel.getGraphics());
 				isWhiteTurn = !isWhiteTurn;
-				((TimerPanel) timerPanel).newMove(isWhiteTurn);
-				((TurnPanel) turnPanel).newMove(isWhiteTurn);
+				if (isWhiteTurn) {
+					((PlayerTurnPanel) whitePlayer).playerTurn();
+					((PlayerTurnPanel) blackPlayer).notPlayerTurn();
+				} else {
+					((PlayerTurnPanel) blackPlayer).playerTurn();
+					((PlayerTurnPanel) whitePlayer).notPlayerTurn();
+				}
 				if (isInCheckmate(board.getGrid(), isWhiteTurn)) {
 					checkMateAction(isWhiteTurn);
 				}
@@ -242,22 +248,40 @@ public class ChessGame {
 		frame.revalidate(); // Refresh the frame's layout
 	}
 
-	private void gameGUI() {
-		frame.setLayout(new BorderLayout());
-		
+	private void gameGUI() {		
+		frame.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
 
 		// Chess panel (center)
 		panel = new ChessPanel(board, this);
-		frame.add(panel, BorderLayout.CENTER);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.gridheight = 2; // Span vertically
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 0.8; // More space allocated
+		gbc.weighty = 1.0;
+		frame.add(panel, gbc);
 
-		// Turn indicator panel (top)
-		turnPanel = new TurnPanel();
-		frame.add(turnPanel, BorderLayout.NORTH);
-
-		// Timer panel (right)
+		// Black Panel
 		if (!(timeSelection == TimeSelection.NoLimit)) {
-			timerPanel = new TimerPanel(timeSelection);
-			frame.add(timerPanel, BorderLayout.EAST);
+			blackPlayer = new PlayerTurnPanel(timeSelection, false);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.gridheight = 1; // Only one row
+			gbc.weightx = 0.8;
+			gbc.weighty = 0.01;
+			frame.add(blackPlayer, gbc);
+		}
+
+		// White Panel
+		if (!(timeSelection == TimeSelection.NoLimit)) {
+			whitePlayer = new PlayerTurnPanel(timeSelection, true);
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			gbc.gridheight = 1; // Span vertically
+			gbc.weightx = 0.8; // Less space
+			gbc.weighty = 0.01;
+			frame.add(whitePlayer, gbc);
 		}
 		
 		frame.setMinimumSize(frame.getSize());

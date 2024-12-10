@@ -11,7 +11,6 @@ public class ChessGame {
 	private Piece slectedPiece = null;
 	private TimeSelection timeSelection = null;
 	private boolean isWhiteTurn = true;
-	protected int boardSize = 800;
 	private JFrame frame;
 	private JPanel settingsPanel;
 	private JPanel blackPlayer;
@@ -61,7 +60,7 @@ public class ChessGame {
 					((PlayerTurnPanel) whitePlayer).notPlayerTurn();
 				}
 				if (isInCheckmate(board.getGrid(), isWhiteTurn)) {
-					checkMateAction(isWhiteTurn);
+					gameOver(isWhiteTurn);
 				}
 
 				// Reset en passant vulnerabilities after a move
@@ -207,16 +206,6 @@ public class ChessGame {
 		return true;
 	}
 
-	private void checkMateAction(Boolean whiteWon) {
-		if (JOptionPane.showConfirmDialog(null, "Do you want to play again?",
-				(whiteWon ? "Black" : "White") + " won!!!",
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			restartGame();
-		} else {
-			frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-		}
-	}
-
 	private void renderPossibleMoves(Piece piece) {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
@@ -231,7 +220,7 @@ public class ChessGame {
 	private void createGUI() {
 		frame = new JFrame("Chess");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(boardSize, boardSize);
+		frame.setSize(600, 670);
 		frame.setVisible(isWhiteTurn);
 		timeSelectionGUI();
 	}
@@ -257,18 +246,18 @@ public class ChessGame {
 		panel = new ChessPanel(board, this);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.gridheight = 1; // Span vertically
+		gbc.gridheight = 1; 
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1; // More space allocated
+		gbc.weightx = 1; 
 		gbc.weighty = 1.0;
 		frame.add(panel, gbc);
 
 		// Black Panel
 		if (!(timeSelection == TimeSelection.NoLimit)) {
-			blackPlayer = new PlayerTurnPanel(timeSelection, false);
+			blackPlayer = new PlayerTurnPanel(timeSelection, false, this);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			gbc.gridheight = 1; // Only one row
+			gbc.gridheight = 1; 
 			gbc.weightx = 1;
 			gbc.weighty = 0;
 			frame.add(blackPlayer, gbc);
@@ -276,7 +265,7 @@ public class ChessGame {
 
 		// White Panel
 		if (!(timeSelection == TimeSelection.NoLimit)) {
-			whitePlayer = new PlayerTurnPanel(timeSelection, true);
+			whitePlayer = new PlayerTurnPanel(timeSelection, true, this);
 			gbc.gridx = 0;
 			gbc.gridy = 3;
 			gbc.gridheight = 1; // Span vertically
@@ -285,6 +274,7 @@ public class ChessGame {
 			frame.add(whitePlayer, gbc);
 		}
 		
+		frame.setResizable(false);
 		frame.setMinimumSize(new Dimension(600, 670));
 		frame.pack();
 		frame.setVisible(true);
@@ -292,5 +282,15 @@ public class ChessGame {
 	
 	public boolean getIsWhiteTurn() {
 		return isWhiteTurn;
+	}
+
+	public void gameOver(Boolean whiteWon) {
+		if (JOptionPane.showConfirmDialog(null, "Do you want to play again?",
+				(whiteWon ? "Black" : "White") + " won!!!",
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			restartGame();
+		} else {
+			frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		}
 	}
 }

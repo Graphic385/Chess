@@ -5,6 +5,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 public class ChessGame {
 	private Board board;
 	private ChessPanel panel;
@@ -64,13 +65,13 @@ public class ChessGame {
 				}
 
 				// Reset en passant vulnerabilities after a move
-                for (Piece[] row : board.getGrid()) {
-                    for (Piece piece : row) {
-                        if (piece instanceof Pawn) {
-                            ((Pawn) piece).resetEnPassantVulnerability();
-                        }
-                    }
-                }
+				for (Piece[] row : board.getGrid()) {
+					for (Piece piece : row) {
+						if (piece instanceof Pawn) {
+							((Pawn) piece).resetEnPassantVulnerability();
+						}
+					}
+				}
 				slectedPiece = null;
 			} else if (pieceOnCellMove != null
 					&& slectedPiece.isWhite() == pieceOnCellMove.isWhite()) {
@@ -139,7 +140,7 @@ public class ChessGame {
 	}
 
 	public boolean isInCheckmate(Piece[][] grid, boolean whiteCheck) {
-		Piece[][] copyOfGrid = new Piece[grid.length][]; 
+		Piece[][] copyOfGrid = new Piece[grid.length][];
 		int[] kingLocation = board.findKing(grid, whiteCheck);
 		int kingX = kingLocation[0];
 		int kingY = kingLocation[1];
@@ -210,7 +211,7 @@ public class ChessGame {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				if (board.isValidMove(board.getPieceX(piece),
-						board.getPieceY(piece), x, y, board.getGrid(), true, isWhiteTurn)) { 
+						board.getPieceY(piece), x, y, board.getGrid(), true, isWhiteTurn)) {
 					panel.drawPossibleMove(x, y);
 				}
 			}
@@ -238,7 +239,7 @@ public class ChessGame {
 		frame.revalidate(); // Refresh the frame's layout
 	}
 
-	private void gameGUI() {		
+	private void gameGUI() {
 		frame.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -246,40 +247,36 @@ public class ChessGame {
 		panel = new ChessPanel(board, this);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.gridheight = 1; 
+		gbc.gridheight = 1;
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1; 
+		gbc.weightx = 1;
 		gbc.weighty = 1.0;
 		frame.add(panel, gbc);
 
 		// Black Panel
-		if (!(timeSelection == TimeSelection.NoLimit)) {
-			blackPlayer = new PlayerTurnPanel(timeSelection, false, this);
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.gridheight = 1; 
-			gbc.weightx = 1;
-			gbc.weighty = 0;
-			frame.add(blackPlayer, gbc);
-		}
+		blackPlayer = new PlayerTurnPanel(timeSelection, false, this);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridheight = 1;
+		gbc.weightx = 1;
+		gbc.weighty = 0;
+		frame.add(blackPlayer, gbc);
 
 		// White Panel
-		if (!(timeSelection == TimeSelection.NoLimit)) {
-			whitePlayer = new PlayerTurnPanel(timeSelection, true, this);
-			gbc.gridx = 0;
-			gbc.gridy = 3;
-			gbc.gridheight = 1; // Span vertically
-			gbc.weightx = 1; // Less space
-			gbc.weighty = 0;
-			frame.add(whitePlayer, gbc);
-		}
-		
+		whitePlayer = new PlayerTurnPanel(timeSelection, true, this);
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridheight = 1; // Span vertically
+		gbc.weightx = 1; // Less space
+		gbc.weighty = 0;
+		frame.add(whitePlayer, gbc);
+
 		frame.setResizable(false);
 		frame.setMinimumSize(new Dimension(600, 670));
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	public boolean getIsWhiteTurn() {
 		return isWhiteTurn;
 	}

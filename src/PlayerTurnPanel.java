@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class PlayerTurnPanel extends JPanel {
+	private boolean noTime = false;
 	private boolean isPlayerWhite;
 	private Timer playerTimer;
 	private JLabel playerTurnLabel;
@@ -54,12 +55,19 @@ public class PlayerTurnPanel extends JPanel {
 				playerTime = 1800; // 30 minutes each
 				timeAddPerTurn = 0; // No increment per turn
 				break;
+			case NoLimit:
+				noTime = true;
+				break;
 			default:
-				throw new UnsupportedOperationException("Error: No time mode selected or unlimited time");
+				throw new UnsupportedOperationException("Error: No time mode selected");
 		}
 		setLayout(new GridLayout(1, 1));
-		playerTurnLabel = new JLabel((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime),
-				SwingConstants.CENTER);
+		if (!noTime) {
+			playerTurnLabel = new JLabel((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime),
+					SwingConstants.CENTER);
+		} else {
+			playerTurnLabel = new JLabel((isPlayerWhite ? "White" : "Black") + " Turn ", SwingConstants.CENTER);
+		}
 		playerTurnLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		playerTurnLabel.setOpaque(true);
 		if (isPlayerWhite) {
@@ -68,29 +76,37 @@ public class PlayerTurnPanel extends JPanel {
 			playerTurnLabel.setBackground(Color.RED);
 		}
 		add(playerTurnLabel);
-		playerTimer = new javax.swing.Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (playerTime > 0) {
-					playerTime--;
-					playerTurnLabel.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
-				} else {
-					game.gameOver(isPlayerWhite);
-					playerTimer.stop();
+
+		if (!noTime) {
+			playerTimer = new javax.swing.Timer(1000, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (playerTime > 0) {
+						playerTime--;
+						playerTurnLabel
+								.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
+					} else {
+						game.gameOver(isPlayerWhite);
+						playerTimer.stop();
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	public void playerTurn() {
 		playerTurnLabel.setBackground(Color.GREEN);
-		playerTimer.restart();
+		if (!noTime) {
+			playerTimer.restart();
+		}
 	}
 
 	public void notPlayerTurn() {
 		playerTurnLabel.setBackground(Color.RED);
-		playerTime += timeAddPerTurn;
-		playerTimer.stop();
+		if (!noTime) {
+			playerTime += timeAddPerTurn;
+			playerTimer.stop();
+		}
 	}
 
 	private String formatTime(int timeInSeconds) {

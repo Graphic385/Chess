@@ -16,7 +16,7 @@ public class PlayerTurnPanel extends JPanel {
 	private int playerTime;
 	private int timeAddPerTurn;
 
-	public PlayerTurnPanel(TimeSelection selectedTime, boolean isPlayerWhite) { //add if no timemode selected
+	public PlayerTurnPanel(TimeSelection selectedTime, boolean isPlayerWhite, ChessGame game) { // add if no timemode selected
 		switch (selectedTime) {
 			case OneMinute:
 				playerTime = 60; // 1 minute
@@ -58,7 +58,8 @@ public class PlayerTurnPanel extends JPanel {
 				throw new UnsupportedOperationException("Error: No time mode selected or unlimited time");
 		}
 		setLayout(new GridLayout(1, 1));
-		playerTurnLabel = new JLabel( (isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime), SwingConstants.CENTER);
+		playerTurnLabel = new JLabel((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime),
+				SwingConstants.CENTER);
 		playerTurnLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		playerTurnLabel.setOpaque(true);
 		if (isPlayerWhite) {
@@ -73,7 +74,10 @@ public class PlayerTurnPanel extends JPanel {
 				if (playerTime > 0) {
 					playerTime--;
 					playerTurnLabel.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
-				} //TODO add end game if time gets to zero 
+				} else {
+					game.gameOver(isPlayerWhite);
+					playerTimer.stop();
+				}
 			}
 		});
 	}
@@ -92,9 +96,9 @@ public class PlayerTurnPanel extends JPanel {
 	private String formatTime(int timeInSeconds) {
 		int minutes = timeInSeconds / 60;
 		int seconds = timeInSeconds % 60;
-		return minutes + ":" +  new DecimalFormat("00").format(seconds);
+		return minutes + ":" + new DecimalFormat("00").format(seconds);
 	}
-	
+
 	public boolean isPlayerWhite() {
 		return isPlayerWhite;
 	}

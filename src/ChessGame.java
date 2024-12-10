@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
@@ -256,9 +257,9 @@ public class ChessGame {
 		panel = new ChessPanel(board, this);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.gridheight = 2; // Span vertically
+		gbc.gridheight = 1; // Span vertically
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 0.8; // More space allocated
+		gbc.weightx = 1; // More space allocated
 		gbc.weighty = 1.0;
 		frame.add(panel, gbc);
 
@@ -268,8 +269,8 @@ public class ChessGame {
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.gridheight = 1; // Only one row
-			gbc.weightx = 0.8;
-			gbc.weighty = 0.01;
+			gbc.weightx = 1;
+			gbc.weighty = 0;
 			frame.add(blackPlayer, gbc);
 		}
 
@@ -279,12 +280,12 @@ public class ChessGame {
 			gbc.gridx = 0;
 			gbc.gridy = 3;
 			gbc.gridheight = 1; // Span vertically
-			gbc.weightx = 0.8; // Less space
-			gbc.weighty = 0.01;
+			gbc.weightx = 1; // Less space
+			gbc.weighty = 0;
 			frame.add(whitePlayer, gbc);
 		}
 		
-		frame.setMinimumSize(frame.getSize());
+		frame.setMinimumSize(new Dimension(600, 670));
 		frame.pack();
 		frame.setVisible(true);
 	}

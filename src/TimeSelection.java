@@ -1,4 +1,4 @@
-public enum TimeSelection {
+public enum TimeSelection { //contains all the timer modes
 	OneMinute,
 	OneMinutePlusSecond,
 	TwoMinutePlusSecond,

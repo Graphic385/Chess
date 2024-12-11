@@ -221,7 +221,8 @@ public class ChessGame {
 	private void createGUI() {
 		frame = new JFrame("Chess");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(600, 670);
+		frame.setSize(380, 620);
+		frame.setResizable(false);
 		frame.setVisible(isWhiteTurn);
 		timeSelectionGUI();
 	}

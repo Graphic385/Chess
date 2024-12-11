@@ -83,8 +83,7 @@ public class PlayerTurnPanel extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					if (playerTime > 0) {
 						playerTime--;
-						playerTurnLabel
-								.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
+						playerTurnLabel.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
 					} else {
 						game.gameOver(isPlayerWhite);
 						playerTimer.stop();
@@ -106,6 +105,7 @@ public class PlayerTurnPanel extends JPanel {
 		if (!noTime) {
 			playerTime += timeAddPerTurn;
 			playerTimer.stop();
+			playerTurnLabel.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
 		}
 	}
 

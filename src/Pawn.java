@@ -1,3 +1,5 @@
+import javax.swing.JOptionPane;
+
 public class Pawn extends Piece {
 	protected boolean hasMoved;
 	protected boolean vulnerableToEnPassant;
@@ -34,8 +36,7 @@ public class Pawn extends Piece {
 			// for promotion to queen if at end of board
 			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering) {
 				board[fromX][fromY] = null;
-				// TODO make popup with options for piece
-				board[toX][toY] = new Queen(isWhite()); // Promote to a queen
+				promotionPopUp(toX, toY, board);
 				didPromoteInThisTurn = true;
 			}
 			return true;
@@ -61,8 +62,7 @@ public class Pawn extends Piece {
 			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering && board[toX][toY]
 					.isWhite() != isWhite()) {
 				board[fromX][fromY] = null;
-				// TODO make popup with options for piece
-				board[toX][toY] = new Queen(isWhite()); // Promote to a queen
+				promotionPopUp(toX, toY, board);
 				didPromoteInThisTurn = true;
 				return true;
 			}
@@ -82,6 +82,34 @@ public class Pawn extends Piece {
 			}
 		}
 		return false;
+	}
+
+	private void promotionPopUp(int toX, int toY, Piece[][] board) {
+		// Custom text for buttons
+        String[] options = {"Queen", "Rook", "Bishop", "Knight"};
+
+        // Show a dialog with 4 buttons
+        int choice = JOptionPane.showOptionDialog(
+            null, // Parent component (null for default)
+            "Choose one of the options below to promote to:", // Message
+            "Promotion Selection", // Title
+            JOptionPane.DEFAULT_OPTION, // Option type
+            JOptionPane.INFORMATION_MESSAGE, // Message type
+            null, // Icon (null for default)
+            options, // Options to display
+            options[0] // Default option
+        );
+
+        // Output the user's choice
+		if (choice == 0) {
+			board[toX][toY] = new Queen(isWhite());
+		} else if (choice == 1) {
+			board[toX][toY] = new Rook(isWhite());
+		} else if (choice == 2) {
+			board[toX][toY] = new Bishop(isWhite());
+		} else if (choice == 3) {
+			board[toX][toY] = new Knight(isWhite());
+		}
 	}
 
 	public boolean didPromoteInThisTurn() {

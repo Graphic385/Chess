@@ -55,12 +55,12 @@ public class ChessGame {
 				panel.drawBoard(panel.getGraphics());
 				isWhiteTurn = !isWhiteTurn;
 				updateTurnPanels();
+				resetEnPassantVulnerability(selectedPiece);
 
 				if (isInCheckmate(board.getGrid(), isWhiteTurn)) {
 					gameOver(isWhiteTurn);
 				}
 
-				resetEnPassantVulnerability();
 				selectedPiece = null;
 			} else if (pieceOnCellMove != null && selectedPiece.isWhite() == pieceOnCellMove.isWhite()) {
 				selectedPiece = pieceOnCellMove;
@@ -92,11 +92,14 @@ public class ChessGame {
 		}
 	}
 
-	private void resetEnPassantVulnerability() {
+	private void resetEnPassantVulnerability(Piece peiceThatMoved) {
+		boolean pawnMoved = (peiceThatMoved instanceof Pawn) ? true : false;
 		for (Piece[] row : board.getGrid()) {
 			for (Piece piece : row) {
 				if (piece instanceof Pawn) {
-					((Pawn) piece).resetEnPassantVulnerability();
+					if (!(pawnMoved && piece.equals(peiceThatMoved))) {
+						((Pawn) piece).resetEnPassantVulnerability();
+					}
 				}
 			}
 		}

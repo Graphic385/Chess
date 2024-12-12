@@ -52,6 +52,9 @@ public class SettingsPanel extends JPanel {
 			timeButtons[rbGbc.gridy] = button;
 			radioButtonPanel.add(button, rbGbc);
 			rbGbc.gridy++;
+			if (timeSelection == TimeSelection.NoLimit) {
+				button.setSelected(true);
+			}
 		}
 
 		gbc.gridx = 0;

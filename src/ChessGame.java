@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -162,6 +163,7 @@ public class ChessGame {
 	}
 
 	private void timeSelectionGUI() {
+		frame.setLayout(new BorderLayout());
 		frame.setMinimumSize(new Dimension(380, 620));
 		frame.setSize(380, 620);
 		settingsPanel = new SettingsPanel(this);

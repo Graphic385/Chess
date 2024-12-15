@@ -53,15 +53,33 @@ public class Board {
 			return false;
 		}
 
+		//check if move causes check for all pawn promotions
 		Piece[][] copyOfGrid = getCopyOfGrid();
-		if (copyOfGrid[fromX][fromY].isValidMove(fromX, fromY, toX, toY, copyOfGrid, false)) { 
-			if (!(copyOfGrid[toX][toY] instanceof Pawn && ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
-				movePiece(fromX, fromY, toX, toY, copyOfGrid);
+		if (copyOfGrid[fromX][fromY] instanceof Pawn && ((copyOfGrid[fromX][fromY].isWhite()) ? toY == 0 : toY == 7)) {
+			for (int i = 0; i < PieceToPromote.values().length; i++) {
+				copyOfGrid = getCopyOfGrid();
+				((Pawn) copyOfGrid[fromX][fromY]).setPieceToPromote(PieceToPromote.values()[i]);
+				if (copyOfGrid[fromX][fromY].isValidMove(fromX, fromY, toX, toY, copyOfGrid, false)) {
+					if (!(copyOfGrid[toX][toY] instanceof Pawn && ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
+						movePiece(fromX, fromY, toX, toY, copyOfGrid);
+					}
+					if (game.isInCheck(copyOfGrid, isWhiteTurn, findKing(copyOfGrid, isWhiteTurn))) {
+						return false;
+					}
+				}
 			}
-			if (game.isInCheck(copyOfGrid, isWhiteTurn, findKing(copyOfGrid, isWhiteTurn))) {
-				return false;
+		} else {
+			copyOfGrid = getCopyOfGrid();
+			if (copyOfGrid[fromX][fromY].isValidMove(fromX, fromY, toX, toY, copyOfGrid, false)) {
+				if (!(copyOfGrid[toX][toY] instanceof Pawn && ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
+					movePiece(fromX, fromY, toX, toY, copyOfGrid);
+				}
+				if (game.isInCheck(copyOfGrid, isWhiteTurn, findKing(copyOfGrid, isWhiteTurn))) {
+					return false;
+				}
 			}
 		}
+		
 		return piece.isValidMove(fromX, fromY, toX, toY, grid, forRendering);
 	}
 

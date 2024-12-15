@@ -4,6 +4,7 @@ public class Pawn extends Piece {
 	protected boolean hasMoved;
 	protected boolean vulnerableToEnPassant;
 	protected boolean didPromoteInThisTurn;
+	protected PieceToPromote pieceToPromote;
 
 	public Pawn(boolean isWhite) {
 		super(isWhite);
@@ -36,7 +37,13 @@ public class Pawn extends Piece {
 			// for promotion to queen if at end of board
 			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering) {
 				board[fromX][fromY] = null;
-				promotionPopUp(toX, toY, board);
+				board[fromX][fromY] = null;
+				if (this.pieceToPromote == null) {
+					promotionPopUp(toX, toY, board);
+				} else {
+					doPromotion(toX, toY, board, this.pieceToPromote);
+				}
+				didPromoteInThisTurn = true;
 				didPromoteInThisTurn = true;
 			}
 			return true;
@@ -62,7 +69,11 @@ public class Pawn extends Piece {
 			if ((isWhite() && toY == 0 || !isWhite() && toY == 7) && !forRendering && board[toX][toY]
 					.isWhite() != isWhite()) {
 				board[fromX][fromY] = null;
-				promotionPopUp(toX, toY, board);
+				if (this.pieceToPromote == null) {
+					promotionPopUp(toX, toY, board);
+				} else {
+					doPromotion(toX, toY, board, this.pieceToPromote);
+				}
 				didPromoteInThisTurn = true;
 				return true;
 			}
@@ -84,31 +95,63 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	private void promotionPopUp(int toX, int toY, Piece[][] board) {
+	private void promotionPopUp(int toX, int toY, Piece[][] board) { //TODO makes popup for checkamte senarios
+		PieceToPromote pieceToPromote = PieceToPromote.Queen;
 		// Custom text for buttons
-        String[] options = {"Queen", "Rook", "Bishop", "Knight"};
+		String[] options = { "Queen", "Rook", "Bishop", "Knight" };
+		int choice = -1; 
 
-        // Show a dialog with 4 buttons
-        int choice = JOptionPane.showOptionDialog(
-            null, // Parent component (null for default)
-            "Choose one of the options below to promote to:", // Message
-            "Promotion Selection", // Title
-            JOptionPane.DEFAULT_OPTION, // Option type
-            JOptionPane.INFORMATION_MESSAGE, // Message type
-            null, // Icon (null for default)
-            options, // Options to display
-            options[0] // Default option
-        );
-
-        // Output the user's choice
+		// Keep showing the dialog until a valid choice is made
+		while (choice == -1) {
+				choice = JOptionPane.showOptionDialog(
+					null, // Parent component (null for default)
+					"Choose one of the options below to promote to:", // Message
+					"Promotion Selection", // Title
+					JOptionPane.DEFAULT_OPTION, // Option type
+					JOptionPane.INFORMATION_MESSAGE, // Message type
+					null, // Icon (null for default)
+					options, // Options to display
+					options[0] // Default option
+			);
+			if (choice == -1) {
+				JOptionPane.showMessageDialog(null, "Please choose a piece", "Try Again", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// Set the promoted piece based on the user's choice
 		if (choice == 0) {
-			board[toX][toY] = new Queen(isWhite());
+			pieceToPromote = PieceToPromote.Queen;
 		} else if (choice == 1) {
-			board[toX][toY] = new Rook(isWhite());
+			pieceToPromote = PieceToPromote.Rook;
 		} else if (choice == 2) {
-			board[toX][toY] = new Bishop(isWhite());
+			pieceToPromote = PieceToPromote.Bishop;
 		} else if (choice == 3) {
+			pieceToPromote = PieceToPromote.Knight;
+		}
+		doPromotion(toX, toY, board, pieceToPromote);
+	}
+
+	private void doPromotion(int toX, int toY, Piece[][] board, PieceToPromote pieceToPromote) {
+		// Set the promoted piece based on the user's choice
+		if (pieceToPromote == PieceToPromote.Queen) {
+			board[toX][toY] = new Queen(isWhite());
+		} else if (pieceToPromote == PieceToPromote.Rook) {
+			board[toX][toY] = new Rook(isWhite());
+		} else if (pieceToPromote == PieceToPromote.Bishop) {
+			board[toX][toY] = new Bishop(isWhite());
+		} else if (pieceToPromote == PieceToPromote.Knight) {
 			board[toX][toY] = new Knight(isWhite());
+		}
+	}
+
+	public void setPieceToPromote(PieceToPromote pieceToPromote) {
+		if (pieceToPromote == PieceToPromote.Queen) {
+			this.pieceToPromote = PieceToPromote.Queen;
+		} else if (pieceToPromote == PieceToPromote.Rook) {
+			this.pieceToPromote = PieceToPromote.Rook;
+		} else if (pieceToPromote == PieceToPromote.Bishop) {
+			this.pieceToPromote = PieceToPromote.Bishop;
+		} else if (pieceToPromote == PieceToPromote.Knight) {
+			this.pieceToPromote = PieceToPromote.Knight;
 		}
 	}
 

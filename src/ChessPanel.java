@@ -11,9 +11,14 @@ import javax.swing.JPanel;
 
 public class ChessPanel extends JPanel {
 	private Board board;
+	private String pieceStyle;
 
 	public ChessPanel(Board board, ChessGame game) {
 		this.board = board;
+		// pieceStyle = game.getPieceStyle(); //TODO make word
+		pieceStyle = "cburnett"; // TODO make word
+
+
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				game.handleClick(e.getX(), e.getY());
@@ -39,7 +44,7 @@ public class ChessPanel extends JPanel {
 	protected void drawBoard(Graphics g) {
 		int cellSize = getWidth() / 8;
 
-		boolean isWhiteTurn = board.getGame().getIsWhiteTurn(); 
+		boolean isWhiteTurn = board.getGame().getIsWhiteTurn();
 		int[] kingLocation = board.findKing(board.getGrid(), isWhiteTurn);
 		boolean kingInCheck = board.getGame().isInCheck(board.getGrid(), isWhiteTurn, kingLocation);
 
@@ -84,14 +89,27 @@ public class ChessPanel extends JPanel {
 			}
 			int numberX = (int) (cellSize * 0.1);
 			int numberY = y * cellSize + (int) (cellSize * 0.3);
-			g.drawString(String.valueOf(8 - y), numberX , numberY);
+			g.drawString(String.valueOf(8 - y), numberX, numberY);
 		}
 	}
 
 	private void drawPiece(Graphics g, Piece piece, int x, int y, int cellSize) {
 		try {
-			String imagePath = "images/" + piece.getClass().getSimpleName().toLowerCase()
-					+ (piece.isWhite() ? "White" : "Black") + ".png";
+			String imagePath = "images/" + pieceStyle + "/" + (piece.isWhite() ? "w" : "b");
+			if (piece instanceof King) {
+				imagePath += "K";
+			} else if (piece instanceof Knight) {
+				imagePath += "N";
+			} else if (piece instanceof Pawn) {
+				imagePath += "P";
+			} else if (piece instanceof Bishop) {
+				imagePath += "B";
+			} else if (piece instanceof Queen) {
+				imagePath += "Q";
+			} else if (piece instanceof Rook) {
+				imagePath += "R";
+			}
+			imagePath += ".png";
 
 			Image img = ImageIO.read(new File(imagePath));
 

@@ -52,7 +52,6 @@ public class ChessGame {
 				if (!(selectedPiece instanceof Pawn && ((Pawn) selectedPiece).didPromoteInThisTurn())) {
 					board.movePiece(selectedPieceX, selectedPieceY, cellX, cellY, board.getGrid());
 				}
-				panel.drawBoard(panel.getGraphics());
 				isWhiteTurn = !isWhiteTurn;
 				updateTurnPanels();
 				resetEnPassantVulnerability(selectedPiece);
@@ -64,22 +63,13 @@ public class ChessGame {
 				selectedPiece = null;
 			} else if (pieceOnCellMove != null && selectedPiece.isWhite() == pieceOnCellMove.isWhite()) {
 				selectedPiece = pieceOnCellMove;
-				panel.drawBoard(panel.getGraphics());
-				renderPossibleMoves(selectedPiece);
 			} else {
 				selectedPiece = null;
 			}
 		} else {
 			selectedPiece = pieceOnCellMove;
-			panel.drawBoard(panel.getGraphics());
-			if (selectedPiece != null) {
-				renderPossibleMoves(selectedPiece);
-			}
 		}
-
-		if (isInCheck(board.getGrid(), isWhiteTurn, board.findKing(board.getGrid(), isWhiteTurn))) {
-			panel.drawBoard(panel.getGraphics());
-		}
+		renderBoardAndMoves(selectedPiece);
 	}
 
 	private void updateTurnPanels() {
@@ -145,6 +135,15 @@ public class ChessGame {
 		}
 
 		return true;
+	}
+
+	private void renderBoardAndMoves(Piece piece) {
+		if (piece != null) {
+			panel.drawBoard(panel.getGraphics());
+			renderPossibleMoves(piece);
+		} else {
+			panel.drawBoard(panel.getGraphics());
+		}
 	}
 
 	private void renderPossibleMoves(Piece piece) {

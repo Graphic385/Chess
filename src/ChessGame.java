@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 public class ChessGame {
 	private Board board;
 	private ChessPanel panel;
-	private Piece selectedPiece = null;
+	public static Piece selectedPiece = null;
 	private TimeSelection timeSelection = null;
 	private boolean isWhiteTurn = true;
 	private JFrame frame;
@@ -47,8 +47,10 @@ public class ChessGame {
 		if (selectedPiece != null) {
 			int selectedPieceX = board.getPieceX(selectedPiece);
 			int selectedPieceY = board.getPieceY(selectedPiece);
-
-			if (board.isValidMove(selectedPieceX, selectedPieceY, cellX, cellY, board.getGrid(), false, isWhiteTurn)) {
+			if (selectedPieceX == -1 || selectedPieceY == -1) {
+				selectedPiece = null;
+			} else if (board.isValidMove(selectedPieceX, selectedPieceY, cellX, cellY, board.getGrid(), false,
+					isWhiteTurn)) {
 				if (!(selectedPiece instanceof Pawn && ((Pawn) selectedPiece).didPromoteInThisTurn())) {
 					board.movePiece(selectedPieceX, selectedPieceY, cellX, cellY, board.getGrid());
 				}
@@ -61,12 +63,10 @@ public class ChessGame {
 				}
 
 				selectedPiece = null;
-			} else if (pieceOnCellMove != null && selectedPiece.isWhite() == pieceOnCellMove.isWhite()) {
-				selectedPiece = pieceOnCellMove;
-			} else {
-				selectedPiece = null;
 			}
-		} else {
+
+		}
+		if (pieceOnCellMove != null && pieceOnCellMove.isWhite() == isWhiteTurn) {
 			selectedPiece = pieceOnCellMove;
 		}
 		renderBoardAndMoves(selectedPiece);
@@ -147,9 +147,14 @@ public class ChessGame {
 	}
 
 	private void renderPossibleMoves(Piece piece) {
+		int pieceX = board.getPieceX(piece);
+		int pieceY = board.getPieceY(piece);
+		if (pieceX == -1 || pieceY == -1) {
+			return;
+		}
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				if (board.isValidMove(board.getPieceX(piece), board.getPieceY(piece), x, y, board.getGrid(), true,
+				if (board.isValidMove(pieceX, pieceY, x, y, board.getGrid(), true,
 						isWhiteTurn)) {
 					panel.drawPossibleMove(x, y);
 				}
@@ -220,6 +225,10 @@ public class ChessGame {
 
 	public boolean getIsWhiteTurn() {
 		return isWhiteTurn;
+	}
+
+	public Piece getSelectedPiece() {
+		return selectedPiece;
 	}
 
 	public void gameOver(boolean whiteWon) {

@@ -39,7 +39,7 @@ public class ChessPanel extends JPanel {
 	protected void drawBoard(Graphics g) {
 		int cellSize = getWidth() / 8;
 
-		boolean isWhiteTurn = board.getGame().getIsWhiteTurn(); 
+		boolean isWhiteTurn = board.getGame().getIsWhiteTurn();
 		int[] kingLocation = board.findKing(board.getGrid(), isWhiteTurn);
 		boolean kingInCheck = board.getGame().isInCheck(board.getGrid(), isWhiteTurn, kingLocation);
 
@@ -52,6 +52,10 @@ public class ChessPanel extends JPanel {
 					g.setColor(new Color(241, 217, 182)); // Light brown
 				} else {
 					g.setColor(new Color(181, 137, 99)); // Dark brown
+				}
+				if (ChessGame.selectedPiece != null && board.getPieceX(ChessGame.selectedPiece) == x
+						&& board.getPieceY(ChessGame.selectedPiece) == y) {
+					g.setColor(new Color(0, 0, 255));
 				}
 				g.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
 
@@ -84,7 +88,7 @@ public class ChessPanel extends JPanel {
 			}
 			int numberX = (int) (cellSize * 0.1);
 			int numberY = y * cellSize + (int) (cellSize * 0.3);
-			g.drawString(String.valueOf(8 - y), numberX , numberY);
+			g.drawString(String.valueOf(8 - y), numberX, numberY);
 		}
 	}
 

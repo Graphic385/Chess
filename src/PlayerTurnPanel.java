@@ -17,7 +17,8 @@ public class PlayerTurnPanel extends JPanel {
 	private int playerTime;
 	private int timeAddPerTurn;
 
-	public PlayerTurnPanel(TimeSelection selectedTime, boolean isPlayerWhite, ChessGame game) { // add if no timemode selected
+	public PlayerTurnPanel(TimeSelection selectedTime, boolean isPlayerWhite, ChessGame game) {
+		this.isPlayerWhite = isPlayerWhite;
 		switch (selectedTime) {
 			case OneMinute:
 				playerTime = 60; // 1 minute
@@ -83,9 +84,10 @@ public class PlayerTurnPanel extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					if (playerTime > 0) {
 						playerTime--;
-						playerTurnLabel.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
+						playerTurnLabel
+								.setText((isPlayerWhite ? "White" : "Black") + " Time: " + formatTime(playerTime));
 					} else {
-						game.gameOver(isPlayerWhite);
+						game.gameOver(!isPlayerWhite);
 						playerTimer.stop();
 					}
 				}

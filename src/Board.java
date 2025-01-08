@@ -53,14 +53,15 @@ public class Board {
 			return false;
 		}
 
-		//check if move causes check for all pawn promotions
+		// check if move causes check for all pawn promotions
 		Piece[][] copyOfGrid = getCopyOfGrid();
 		if (copyOfGrid[fromX][fromY] instanceof Pawn && ((copyOfGrid[fromX][fromY].isWhite()) ? toY == 0 : toY == 7)) {
 			for (int i = 0; i < PieceToPromote.values().length; i++) {
 				copyOfGrid = getCopyOfGrid();
 				((Pawn) copyOfGrid[fromX][fromY]).setPieceToPromote(PieceToPromote.values()[i]);
 				if (copyOfGrid[fromX][fromY].isValidMove(fromX, fromY, toX, toY, copyOfGrid, false)) {
-					if (!(copyOfGrid[toX][toY] instanceof Pawn && ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
+					if (!(copyOfGrid[toX][toY] instanceof Pawn
+							&& ((Pawn) copyOfGrid[toX][toY]).didPromoteInThisTurn())) {
 						movePiece(fromX, fromY, toX, toY, copyOfGrid);
 					}
 					if (game.isInCheck(copyOfGrid, isWhiteTurn, findKing(copyOfGrid, isWhiteTurn))) {
@@ -79,7 +80,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		return piece.isValidMove(fromX, fromY, toX, toY, grid, forRendering);
 	}
 
@@ -140,12 +141,12 @@ public class Board {
 	public Piece[][] getCopyOfGrid() {
 		Piece[][] copyOfGrid = new Piece[grid.length][grid.length];
 		for (int i = 0; i < grid.length; i++) {
-			if (grid[i] == null) 
+			if (grid[i] == null)
 				continue;
 			for (int j = 0; j < grid.length; j++) {
 				if (grid[i][j] != null) {
 					copyOfGrid[i][j] = grid[i][j].copy();
-				} 
+				}
 			}
 		}
 		return copyOfGrid;
